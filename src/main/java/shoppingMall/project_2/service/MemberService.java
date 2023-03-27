@@ -44,8 +44,8 @@ public class MemberService {
     }
 
     public Member findById(String userId) {
-        Member findMember = memberRepository.findById(userId);
-        return findMember;
+        return memberRepository.findById(userId);
+
     }
 
     /**

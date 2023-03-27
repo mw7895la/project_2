@@ -1,4 +1,4 @@
-package shoppingMall.project_2.web.member;
+package shoppingMall.project_2.repository.member;
 
 import lombok.Data;
 

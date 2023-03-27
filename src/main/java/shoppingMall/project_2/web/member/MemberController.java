@@ -2,7 +2,6 @@ package shoppingMall.project_2.web.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.ScriptAssert;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -10,16 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import shoppingMall.project_2.domain.member.Grade;
 import shoppingMall.project_2.domain.member.Member;
-import shoppingMall.project_2.repository.member.MemberRepository;
+import shoppingMall.project_2.repository.member.MemberUpdateForm;
 import shoppingMall.project_2.service.MemberService;
 import shoppingMall.project_2.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import java.util.Optional;
 
 import static shoppingMall.project_2.domain.member.Grade.VIP;
 
@@ -79,11 +75,11 @@ public class MemberController {
         Member FindMember = memberService.findByloginId(sessionMember.getUserId()).get();
 
         if (!FindMember.getUserId().equals(memberUpdateForm.getUserId())) {
-            bindingResult.rejectValue("userId", "check.member.userid", null,null);
+            bindingResult.rejectValue("userId", "check.member.userid", null, null);
 
         }
         if (!FindMember.getPassword().equals(memberUpdateForm.getOldPassword())) {
-            bindingResult.rejectValue("oldPassword", "check.member.oldPassword",null, null);
+            bindingResult.rejectValue("oldPassword", "check.member.oldPassword", null, null);
         }
         if (memberUpdateForm.getNewPassword().length() > 10) {
             bindingResult.rejectValue("newPassword", "range.member.password", new Object[]{0, 10}, null);
@@ -104,5 +100,18 @@ public class MemberController {
     }
 
     //회원 탈퇴
+    @PostMapping("/delete")
+    public String deleteMember(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return "home";
+        }
+        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        memberService.deleteById(member.getUserId(),member.getPassword());
+        session.invalidate();
+
+        return "redirect:/";
+    }
 
 }
